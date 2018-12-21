@@ -1,5 +1,6 @@
 // --- start point ---
 function initialize() {
+    setupCamera();
     draw();
 }
 
@@ -197,4 +198,13 @@ rotZ.innerHTML = sliderRotZ.value;
 sliderRotZ.oninput = function() {
     camera.rotation.z = this.value;
     rotZ.innerHTML = this.value;
+}
+
+function setupCamera() {
+    sliderPosX.value = posX.innerHTML = camera.position.x = player1.position.x - 100;
+	sliderPosY.value = posY.innerHTML = camera.position.y = 0;
+	sliderPosZ.value = posZ.innerHTML = camera.position.z = 121;
+	sliderRotX.value = rotX.innerHTML = camera.rotation.x = 0;
+	sliderRotY.value = rotY.innerHTML = camera.rotation.y = -1.04;
+	sliderRotZ.value = rotZ.innerHTML = camera.rotation.z = -1.57;
 }
