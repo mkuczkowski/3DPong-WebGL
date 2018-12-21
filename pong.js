@@ -9,6 +9,8 @@ function draw() {
     renderer.render(scene, camera);
     ballMovement();
     playerMovement();
+    updateCameraVals();
+    rotateCircles();
     requestAnimationFrame(draw);
 }
 
@@ -26,7 +28,6 @@ let camera = new THREE.PerspectiveCamera( 50, (WIDTH/HEIGHT), 0.1, 10000);
 let scene = new THREE.Scene();
 
 scene.add(camera);
-camera.position.z = 320;
 
 let sphereMaterial = new THREE.MeshLambertMaterial({color: 0xC43467});
 let ball = new THREE.Mesh(
@@ -62,6 +63,26 @@ let gameArea = new THREE.Mesh(
 
 scene.add(gameArea);
 
+gameArea.rotation.x += 300.02;
+gameArea.position.y -=5;
+
+let circles = [];
+
+for(let i=0; i<6; i++) {
+    let circleGeometry = new THREE.CircleGeometry( 235*i, 64, 0, 320);
+    let circleMaterial = new THREE.MeshFaceMaterial(new THREE.MeshBasicMaterial(
+        {map: new THREE.TextureLoader().load("https://i.imgur.com/w6uPqg8.jpg"),
+         side: THREE.DoubleSide }));
+    var circle = new THREE.Mesh( circleGeometry, circleMaterial );
+    scene.add( circle );
+    circle.rotation.x += 300.02;
+    circle.rotation.z += i*3;
+    circle.position.y = -10;
+    if(i !== 0) circle.position.y *= (i*(i+3));
+    circles.push(circle);
+}
+
+
 let playerMaterial = new THREE.MeshLambertMaterial({color: 0xCC1111});
 
 let player1 = new THREE.Mesh(
@@ -81,9 +102,10 @@ scene.add(player2);
 
 player1.position.x = -COURT_WIDTH/2 + 8;
 player2.position.x = COURT_WIDTH/2 - 8;
-
 player1.position.z = 8;
 player2.position.z = 8;
+player1.rotation.x += 300.02;
+player2.rotation.x += 300.02;
 
 const BALL_SPEED = 1.7;
 let ballDirectionY = 1;
@@ -91,10 +113,10 @@ let ballDirectionX = 1;
 
 function ballMovement() {
     ball.position.x -= ballDirectionX * BALL_SPEED;
-    ball.position.y -= ballDirectionY * BALL_SPEED;
+    ball.position.z -= ballDirectionY * BALL_SPEED;
 
-    if(ball.position.y <= -COURT_HEIGHT/2) ballDirectionY = -ballDirectionY;
-    if(ball.position.y >= COURT_HEIGHT/2)  ballDirectionY = -ballDirectionY;
+    if(ball.position.z <= -COURT_HEIGHT/2) ballDirectionY = -ballDirectionY;
+    if(ball.position.z >= COURT_HEIGHT/2)  ballDirectionY = -ballDirectionY;
 
     if (ball.position.x <= -COURT_WIDTH/2) {
         //player2 scores
@@ -107,16 +129,16 @@ function ballMovement() {
 
     if (ball.position.x <= player1.position.x + 8
         &&  ball.position.x >= player1.position.x) {
-            if (ball.position.y <= player1.position.y + 45/2
-            &&  ball.position.y >= player1.position.y - 45/2) {               
+            if (ball.position.z <= player1.position.z + 45/2
+            &&  ball.position.z >= player1.position.z - 45/2) {               
                     ballDirectionX = -ballDirectionX;   
             }
         }
 
     if (ball.position.x <= player2.position.x + 8
-        &&  ball.position.x >= player2.position.x) {
-            if (ball.position.y <= player2.position.y + 45/2
-            &&  ball.position.y >= player2.position.y - 45/2) {
+        &&  ball.position.x >= player2.position.x - 8) {
+            if (ball.position.z <= player2.position.z + 45/2
+            &&  ball.position.z >= player2.position.z - 45/2) {
                     ballDirectionX = -ballDirectionX;
                 }
             }
@@ -126,17 +148,17 @@ function ballMovement() {
 function playerMovement() {
     document.onkeydown = function(e) {
         switch (e.keyCode) {
-            case 37: //left arrow
-                if(player1.position.y < COURT_HEIGHT / 2 - 25) 
-                    player1.position.y += 3.5;   
+            case 65: //a
+                if(player1.position.z > -COURT_HEIGHT / 2 + 25) 
+                    player1.position.z -= 3.5;
                 break;
-            case 39: //right arrow
-                if(player1.position.y > -COURT_HEIGHT / 2 + 25) 
-                    player1.position.y -= 3.5;
+            case 68: //d
+                if(player1.position.z < COURT_HEIGHT / 2 - 25) 
+                    player1.position.z += 3.5;   
                 break;
         }
     };
-    player2.position.y = ball.position.y * 0.7;
+    player2.position.z = ball.position.z * 0.7;
 }
 
 function nextRound() {
@@ -201,10 +223,46 @@ sliderRotZ.oninput = function() {
 }
 
 function setupCamera() {
-    sliderPosX.value = posX.innerHTML = camera.position.x = player1.position.x - 100;
-	sliderPosY.value = posY.innerHTML = camera.position.y = 0;
-	sliderPosZ.value = posZ.innerHTML = camera.position.z = 121;
+    sliderPosX.value = posX.innerHTML = camera.position.x = -350;
+	sliderPosY.value = posY.innerHTML = camera.position.y = 50;
+	sliderPosZ.value = posZ.innerHTML = camera.position.z = 10;
 	sliderRotX.value = rotX.innerHTML = camera.rotation.x = 0;
-	sliderRotY.value = rotY.innerHTML = camera.rotation.y = -1.04;
-	sliderRotZ.value = rotZ.innerHTML = camera.rotation.z = -1.57;
+	sliderRotY.value = rotY.innerHTML = camera.rotation.y = -1.55;
+	sliderRotZ.value = rotZ.innerHTML = camera.rotation.z;
+}
+
+function updateCameraVals() {
+    sliderPosX.value = posX.innerHTML = Math.round(camera.position.x * 100) / 100;
+	sliderPosY.value = posY.innerHTML = Math.round(camera.position.y * 100) / 100;;
+	sliderPosZ.value = posZ.innerHTML = Math.round(camera.position.z * 100) / 100;
+	sliderRotX.value = rotX.innerHTML = Math.round(camera.rotation.x * 100) / 100;
+	sliderRotY.value = rotY.innerHTML = Math.round(camera.rotation.y * 100) / 100;
+	sliderRotZ.value = rotZ.innerHTML = Math.round(camera.rotation.z * 100) / 100;
+}
+
+let skyGeo = new THREE.CubeGeometry(10000, 10000, 10000); 
+
+let skyMaterials = [
+    new THREE.MeshBasicMaterial( {map: new THREE.TextureLoader().load("https://i.imgur.com/A2pUBYB.png"), side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial( {map: new THREE.TextureLoader().load("https://i.imgur.com/lrv5RwF.png"), side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial( {map: new THREE.TextureLoader().load("https://i.imgur.com/ViLdqba.png"), side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial( {map: new THREE.TextureLoader().load("https://i.imgur.com/ymZ0c6O.png"), side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial( {map: new THREE.TextureLoader().load("https://i.imgur.com/PGjQMKa.png"), side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial( {map: new THREE.TextureLoader().load("https://i.imgur.com/pLcKikk.png"), side: THREE.DoubleSide })
+];
+
+let skyMaterial = new THREE.MeshFaceMaterial(skyMaterials);
+let sky = new THREE.Mesh(skyGeo, skyMaterial);
+scene.add(sky);
+
+let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+function rotateCircles() {
+    let itr = 0;
+    circles.forEach(function(item) {
+        if(itr++ % 2 === 0)
+            item.rotation.z += 0.001;
+        else
+            item.rotation.z -= 0.001;
+    });
 }
