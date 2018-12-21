@@ -3,11 +3,40 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
         <title>3D Pong</title>
     </head>
     <body onload="initialize();">
         <div id="canvas"></div>
+        <h1 align="center"><i class="fas fa-table-tennis"></i> Pong</h1>
+        <div class="cam-options">
+        <div class="slidecontainer">
+            <p>Camera position X: <span id="posX"></span></p>
+            <input type="range" min="-1000" max="1000" value="1" class="slider" id="posXRange">
+        </div>
+        <div class="slidecontainer">
+            <p>Camera position Y: <span id="posY"></span></p>
+            <input type="range" min="-1000" max="1000" value="1" class="slider" id="posYRange">
+        </div>
+        <div class="slidecontainer">
+            <p>Camera position Z: <span id="posZ"></span></p>
+            <input type="range" min="-1000" max="1000" value="320" class="slider" id="posZRange">
+        </div>
+        <div class="slidecontainer">
+            <p>Camera rotation X: <span id="rotX"></span></p>
+            <input type="range" min="0" max="6.29" step='0.01' value="0" class="slider" id="rotXRange">
+        </div>
+        <div class="slidecontainer">
+            <p>Camera rotation Y: <span id="rotY"></span></p>
+            <input type="range" min="0" max="6.29" step='0.01' value="0" class="slider" id="rotYRange">
+        </div>
+        <div class="slidecontainer">
+            <p>Camera rotation Z: <span id="rotZ"></span></p>
+            <input type="range" min="0" max="6.29" step='0.01' value="0" class="slider" id="rotZRange">
+        </div>
+        </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/99/three.min.js"></script>
         <script src="pong.js"></script>
     </body>

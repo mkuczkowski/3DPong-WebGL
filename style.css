@@ -1,6 +1,8 @@
 body {
     background: rgb(70,70,70);
     background: radial-gradient(circle, rgba(70,70,70,1) 0%, rgba(22,22,22,1) 100%);
+    font-family: 'Poppins', sans-serif;
+    color: white;
 }
 
 #canvas {
@@ -11,4 +13,44 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.slider {
+    -webkit-appearance: none;
+    width: 220px;
+    height: 12px;
+    border-radius: 9px;   
+    background: #b0f345;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    background: rgb(17, 176, 216);
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: rgb(17, 176, 216);
+    cursor: pointer;
+}
+
+.slidecontainer p span {
+    color: orange;
+}
+
+.cam-options {
+   left: 0%;
+   top: 50%;
+   position: absolute;
+   transform: translate(0%, -50%);
 }

@@ -144,3 +144,57 @@ function nextRound() {
     player1.position.y = 0;
     player2.position.y = 0;
 }
+
+let sliderPosX = document.getElementById("posXRange");
+let posX = document.getElementById("posX");
+posX.innerHTML = sliderPosX.value;
+
+sliderPosX.oninput = function() {
+    camera.position.x = this.value;
+    posX.innerHTML = this.value;
+}
+
+let sliderPosY = document.getElementById("posYRange");
+let posY = document.getElementById("posY");
+posY.innerHTML = sliderPosY.value;
+
+sliderPosY.oninput = function() {
+    camera.position.y = this.value;
+    posY.innerHTML = this.value;
+}
+
+let sliderPosZ = document.getElementById("posZRange");
+let posZ = document.getElementById("posZ");
+posZ.innerHTML = sliderPosZ.value;
+
+sliderPosZ.oninput = function() {
+    camera.position.z = this.value;
+    posZ.innerHTML = this.value;
+}
+
+let sliderRotX = document.getElementById("rotXRange");
+let rotX = document.getElementById("rotX");
+rotX.innerHTML = sliderRotX.value;
+
+sliderRotX.oninput = function() {
+    camera.rotation.x = this.value;
+    rotX.innerHTML = this.value;
+}
+
+let sliderRotY = document.getElementById("rotYRange");
+let rotY = document.getElementById("rotY");
+rotY.innerHTML = sliderRotY.value;
+
+sliderRotY.oninput = function() {
+    camera.rotation.y = this.value;
+    rotY.innerHTML = this.value;
+}
+
+let sliderRotZ = document.getElementById("rotZRange");
+let rotZ = document.getElementById("rotZ");
+rotZ.innerHTML = sliderRotZ.value;
+
+sliderRotZ.oninput = function() {
+    camera.rotation.z = this.value;
+    rotZ.innerHTML = this.value;
+}
