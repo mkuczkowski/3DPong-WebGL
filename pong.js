@@ -51,8 +51,8 @@ const court = new THREE.TextureLoader().load( "https://i.imgur.com/nWDveBQ.png" 
 
 let planeMaterial = new THREE.MeshBasicMaterial({map: court});
 
-const COURT_WIDTH = 390;
-const COURT_HEIGHT = 180;
+const COURT_WIDTH = 420;
+const COURT_HEIGHT = 210;
 
 let gameArea = new THREE.Mesh(
     new THREE.PlaneGeometry(
@@ -64,7 +64,20 @@ let gameArea = new THREE.Mesh(
 scene.add(gameArea);
 
 gameArea.rotation.x += 300.02;
-gameArea.position.y -=5;
+const areaBottom = gameArea.position.y -=5;
+
+let gameAreaRoof = new THREE.Mesh(
+    new THREE.PlaneGeometry(
+        COURT_WIDTH, COURT_HEIGHT, 10, 10
+    ),
+    planeMaterial
+);
+
+scene.add(gameAreaRoof);
+
+gameAreaRoof.rotation.x += 300.02;
+const areaRoof = gameAreaRoof.position.y += 155;
+gameAreaRoof.material.side = THREE.DoubleSide;
 
 let circles = [];
 
@@ -83,19 +96,19 @@ for(let i=0; i<6; i++) {
 }
 
 
-let playerMaterial = new THREE.MeshLambertMaterial({color: 0xCC1111});
+let playerMaterial = new THREE.MeshLambertMaterial({color: 0xCC1111, transparent: true, opacity: 0.6});
 
 let player1 = new THREE.Mesh(
   new THREE.CubeGeometry(
       //width, height, depth, quality
-      8, 45, 8, 7, 7, 7),
+      8, 45, 48, 7, 7, 7),
   playerMaterial);
 
 scene.add(player1);
 
 let player2 = new THREE.Mesh(
   new THREE.CubeGeometry(
-    8, 45, 8, 7, 7, 7),
+    8, 45, 48, 7, 7, 7),
   playerMaterial);
 
 scene.add(player2);
@@ -106,17 +119,23 @@ player1.position.z = 8;
 player2.position.z = 8;
 player1.rotation.x += 300.02;
 player2.rotation.x += 300.02;
+player1.position.y += 70;
+player2.position.y += 70;
 
-const BALL_SPEED = 1.7;
-let ballDirectionY = 1;
+const BALL_SPEED = 1.6;
+let ballDirectionZ = 1;
 let ballDirectionX = 1;
+let ballDirectionY = 1;
 
 function ballMovement() {
     ball.position.x -= ballDirectionX * BALL_SPEED;
-    ball.position.z -= ballDirectionY * BALL_SPEED;
+    ball.position.z -= ballDirectionZ * BALL_SPEED;
+    ball.position.y += ballDirectionY * BALL_SPEED;
 
-    if(ball.position.z <= -COURT_HEIGHT/2) ballDirectionY = -ballDirectionY;
-    if(ball.position.z >= COURT_HEIGHT/2)  ballDirectionY = -ballDirectionY;
+    if(ball.position.z <= -COURT_HEIGHT/2) ballDirectionZ = -ballDirectionZ;
+    if(ball.position.z >= COURT_HEIGHT/2)  ballDirectionZ = -ballDirectionZ;
+    if(ball.position.y >= areaRoof) ballDirectionY = -ballDirectionY;
+    if(ball.position.y <= areaBottom) ballDirectionY = 1;
 
     if (ball.position.x <= -COURT_WIDTH/2) {
         //player2 scores
@@ -128,10 +147,13 @@ function ballMovement() {
     }
 
     if (ball.position.x <= player1.position.x + 8
-        &&  ball.position.x >= player1.position.x) {
+        &&  ball.position.x >= player1.position.x - 8) {
             if (ball.position.z <= player1.position.z + 45/2
-            &&  ball.position.z >= player1.position.z - 45/2) {               
-                    ballDirectionX = -ballDirectionX;   
+            &&  ball.position.z >= player1.position.z - 45/2) {
+                if (ball.position.y <= player1.position.y + 48/2
+                &&  ball.position.y >= player1.position.y - 48/2) {
+                    ballDirectionX = -ballDirectionX;
+                }                
             }
         }
 
@@ -139,10 +161,12 @@ function ballMovement() {
         &&  ball.position.x >= player2.position.x - 8) {
             if (ball.position.z <= player2.position.z + 45/2
             &&  ball.position.z >= player2.position.z - 45/2) {
-                    ballDirectionX = -ballDirectionX;
+                if (ball.position.y <= player2.position.y + 48/2
+                &&  ball.position.y >= player2.position.y - 48/2) {
+                        ballDirectionX = -ballDirectionX; 
                 }
             }
-            
+        } 
 }
 
 function playerMovement() {
@@ -150,22 +174,34 @@ function playerMovement() {
         switch (e.keyCode) {
             case 65: //a
                 if(player1.position.z > -COURT_HEIGHT / 2 + 25) 
-                    player1.position.z -= 3.5;
+                    player1.position.z -= 6.5;
                 break;
             case 68: //d
                 if(player1.position.z < COURT_HEIGHT / 2 - 25) 
-                    player1.position.z += 3.5;   
+                    player1.position.z += 6.5;   
+                break;
+            case 83: //s
+                if(player1.position.y > areaBottom)
+                    player1.position.y -= 6.5;
+                break;
+            case 87: //w
+                if(player1.position.y < areaRoof)
+                    player1.position.y += 6.5;
                 break;
         }
     };
     player2.position.z = ball.position.z * 0.7;
+    player2.position.y = ball.position.y * 0.8;
+
+    player1.position.z = ball.position.z * 0.7;
+    player1.position.y = ball.position.y * 0.9;
 }
 
 function nextRound() {
     ball.position.x = 0;
     ball.position.y = 0;
-    player1.position.y = 0;
-    player2.position.y = 0;
+    player1.position.y = 70;
+    player2.position.y = 70;
 }
 
 let sliderPosX = document.getElementById("posXRange");
