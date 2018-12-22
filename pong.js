@@ -1,6 +1,7 @@
 // --- start point ---
 function initialize() {
     setupCamera();
+    document.addEventListener('mousemove', onMouseMove, false);
     draw();
 }
 
@@ -10,7 +11,7 @@ function draw() {
     ballMovement();
     playerMovement();
     updateCameraVals();
-    rotateCircles();
+    rotateObjects();
     requestAnimationFrame(draw);
 }
 
@@ -29,10 +30,12 @@ let scene = new THREE.Scene();
 
 scene.add(camera);
 
-let sphereMaterial = new THREE.MeshLambertMaterial({color: 0xC43467});
+const ballTexture = new THREE.TextureLoader().load( "https://i.imgur.com/AptTDnU.jpg" );
+let ballMaterial = new THREE.MeshBasicMaterial({map: ballTexture});
+
 let ball = new THREE.Mesh(
     new THREE.SphereGeometry(5, 8, 6),
-    sphereMaterial
+    ballMaterial
 );
 
 scene.add(ball);
@@ -48,8 +51,10 @@ pointLight.distance = 10000;
 scene.add(pointLight);
 
 const court = new THREE.TextureLoader().load( "https://i.imgur.com/nWDveBQ.png" );
-
 let planeMaterial = new THREE.MeshBasicMaterial({map: court});
+
+const glass = new THREE.TextureLoader().load( "https://i.imgur.com/PoFDw4O.jpg" );
+let glassMaterial = new THREE.MeshBasicMaterial({map: glass, transparent: true, opacity: 0.6})
 
 const COURT_WIDTH = 420;
 const COURT_HEIGHT = 210;
@@ -64,13 +69,15 @@ let gameArea = new THREE.Mesh(
 scene.add(gameArea);
 
 gameArea.rotation.x += 300.02;
+gameArea.material.side = THREE.DoubleSide;
+
 const areaBottom = gameArea.position.y -=5;
 
 let gameAreaRoof = new THREE.Mesh(
     new THREE.PlaneGeometry(
         COURT_WIDTH, COURT_HEIGHT, 10, 10
     ),
-    planeMaterial
+    glassMaterial
 );
 
 scene.add(gameAreaRoof);
@@ -78,6 +85,30 @@ scene.add(gameAreaRoof);
 gameAreaRoof.rotation.x += 300.02;
 const areaRoof = gameAreaRoof.position.y += 155;
 gameAreaRoof.material.side = THREE.DoubleSide;
+
+let wall1 = new THREE.Mesh(
+    new THREE.PlaneGeometry(
+        COURT_WIDTH, COURT_HEIGHT-50, 10, 10
+    ),
+    glassMaterial
+);
+
+scene.add(wall1);
+wall1.material.side = THREE.DoubleSide;
+wall1.position.y += 75;
+wall1.position.z -= 105;
+
+let wall2 = new THREE.Mesh(
+    new THREE.PlaneGeometry(
+        COURT_WIDTH, COURT_HEIGHT-50, 10, 10
+    ),
+    glassMaterial
+);
+
+scene.add(wall2);
+wall2.material.side = THREE.DoubleSide;
+wall2.position.y += 75;
+wall2.position.z += 105;
 
 let circles = [];
 
@@ -94,7 +125,6 @@ for(let i=0; i<6; i++) {
     if(i !== 0) circle.position.y *= (i*(i+3));
     circles.push(circle);
 }
-
 
 let playerMaterial = new THREE.MeshLambertMaterial({color: 0xCC1111, transparent: true, opacity: 0.6});
 
@@ -121,6 +151,27 @@ player1.rotation.x += 300.02;
 player2.rotation.x += 300.02;
 player1.position.y += 70;
 player2.position.y += 70;
+
+const brick = new THREE.TextureLoader().load( "https://i.imgur.com/j4G4r8M.jpg" );
+let brickMaterial = new THREE.MeshBasicMaterial({map: brick});
+
+let basement = new THREE.Mesh(
+  new THREE.CubeGeometry(
+      //width, height, depth, quality
+      COURT_WIDTH, COURT_HEIGHT, 33, 7, 7),
+  brickMaterial);
+
+scene.add(basement);
+basement.rotation.x += 300.02;
+basement.position.y -= 22.5;
+
+const tripleColor = new THREE.TextureLoader().load( "https://i.imgur.com/TR9mA8N.jpg" );
+let tripleColorMaterial = new THREE.MeshBasicMaterial({map: tripleColor});
+
+let cylinderGeometry = new THREE.CylinderGeometry( 40, 40, 1300, 320 );
+let cylinder = new THREE.Mesh( cylinderGeometry, tripleColorMaterial );
+scene.add( cylinder );
+cylinder.position.y -= 680;
 
 const BALL_SPEED = 1.6;
 let ballDirectionZ = 1;
@@ -190,12 +241,18 @@ function playerMovement() {
                 break;
         }
     };
-    player2.position.z = ball.position.z * 0.7;
-    player2.position.y = ball.position.y * 0.8;
-
-    player1.position.z = ball.position.z * 0.7;
-    player1.position.y = ball.position.y * 0.9;
+    player2.position.z = ball.position.z * 0.8;
+    player2.position.y = ball.position.y * 0.9;
 }
+
+let mouse = {x: 0, y: 0};
+function onMouseMove(event) {
+	event.preventDefault();
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    player1.position.z = mouse.x * 170;
+	player1.position.y = mouse.y * 150 + 50;
+};
 
 function nextRound() {
     ball.position.x = 0;
@@ -293,7 +350,7 @@ scene.add(sky);
 
 let controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-function rotateCircles() {
+function rotateObjects() {
     let itr = 0;
     circles.forEach(function(item) {
         if(itr++ % 2 === 0)
@@ -301,4 +358,8 @@ function rotateCircles() {
         else
             item.rotation.z -= 0.001;
     });
+    cylinder.rotation.y += 0.04;
+    ball.rotation.z += 0.03;
+    ball.rotation.x += 0.03;
+    ball.rotation.y += 0.03;
 }
