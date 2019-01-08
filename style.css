@@ -54,3 +54,11 @@ body {
    position: absolute;
    transform: translate(0%, -50%);
 }
+
+.score {
+    float: right;
+}
+
+.score span {
+    color: greenyellow;
+}

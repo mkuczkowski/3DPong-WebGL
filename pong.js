@@ -7,13 +7,22 @@ function initialize() {
 
 // --- runs every frame ---
 function draw() {
-    renderer.render(scene, camera);
-    ballMovement();
-    playerMovement();
-    updateCameraVals();
-    rotateObjects();
-    requestAnimationFrame(draw);
+    if(!isGameOver) {
+        ballMovement();
+        playerMovement();
+        rotateObjects();
+        updateCameraVals();
+        renderer.render(scene, camera);
+        requestAnimationFrame(draw);
+    } else {
+        const whoWon = player1score > player2score ? "Player 1" : "Player 2";
+        alert(whoWon + " won!");
+    }
 }
+
+let player1score = 0;
+let player2score = 0;
+let isGameOver = false;
 
 const WIDTH = 1200;
 const HEIGHT = 700;
@@ -185,11 +194,11 @@ function ballMovement() {
 
     if (ball.position.x <= -COURT_WIDTH/2) {
         //player2 scores
-        nextRound();
+        nextRound("player2");
     }
     if (ball.position.x >= COURT_WIDTH/2) {
         //player1 scores
-        nextRound();
+        nextRound("player1");
     }
 
     if (ball.position.x <= player1.position.x + 8
@@ -249,11 +258,23 @@ function onMouseMove(event) {
 	player1.position.y = mouse.y * 150 + 50;
 };
 
-function nextRound() {
+const p1score = document.getElementById("player1score");
+const p2score = document.getElementById("player2score");
+
+function nextRound(winner) {
     ball.position.x = 0;
     ball.position.y = 0;
     player1.position.y = 70;
     player2.position.y = 70;
+    if(winner === "player1") {
+        player1score++;
+        p1score.innerHTML = player1score;
+    } else {
+        player2score++;
+        p2score.innerHTML = player2score;
+    }
+    if(player1score === 10 || player2score === 10)
+        isGameOver = true;
 }
 
 let sliderPosX = document.getElementById("posXRange");
