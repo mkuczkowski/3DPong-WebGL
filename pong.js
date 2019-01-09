@@ -17,6 +17,17 @@ function draw() {
     } else {
         const whoWon = player1score > player2score ? "Player 1" : "Player 2";
         alert(whoWon + " won!");
+        if(whoWon === "Player 1") {
+            const soundToPlay = new Howl({
+                src: ['sounds/mlg-airhorn.mp3']
+            });
+            soundToPlay.play()
+        } else {
+            const soundToPlay = new Howl({
+                src: ['sounds/dramaticswf.mp3']
+            });
+            soundToPlay.play();
+        }
     }
 }
 
@@ -195,11 +206,23 @@ function ballMovement() {
     if (ball.position.x <= -COURT_WIDTH/2) {
         //player2 scores
         nextRound("player2");
+        const soundToPlay = new Howl({
+            src: ['sounds/chanchanswf.mp3']
+        });
+        soundToPlay.play();
     }
     if (ball.position.x >= COURT_WIDTH/2) {
         //player1 scores
+        const soundToPlay = new Howl({
+            src: ['sounds/strike.mp3']
+        });
+        soundToPlay.play();
         nextRound("player1");
     }
+
+    const soundToPlay = new Howl({
+        src: ['sounds/bubbles.mp3']
+    });
 
     if (ball.position.x <= player1.position.x + 8
         &&  ball.position.x >= player1.position.x - 8) {
@@ -207,6 +230,7 @@ function ballMovement() {
             &&  ball.position.z >= player1.position.z - 45/2) {
                 if (ball.position.y <= player1.position.y + 48/2
                 &&  ball.position.y >= player1.position.y - 48/2) {
+                    soundToPlay.play();
                     ballDirectionX = -ballDirectionX;
                 }                
             }
@@ -218,6 +242,7 @@ function ballMovement() {
             &&  ball.position.z >= player2.position.z - 45/2) {
                 if (ball.position.y <= player2.position.y + 48/2
                 &&  ball.position.y >= player2.position.y - 48/2) {
+                    soundToPlay.play();
                     ballDirectionX = -ballDirectionX; 
                 }
             }
